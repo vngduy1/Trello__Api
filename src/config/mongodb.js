@@ -22,7 +22,7 @@ export const CONNECT_DB = async () => {
   trelloDatabaseInstance = mongoClientInstance.db(env.DATABASE_NAME);
 };
 
-//Dong ket noi toi Datavase khi can
+//Dong ket noi toi Database khi can
 export const CLOSE_DB = async () => {
   await mongoClientInstance.close();
 };

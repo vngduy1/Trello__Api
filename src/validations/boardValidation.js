@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { StatusCodes } from "http-status-codes";
+import ApiError from "~/utils/ApiError";
 
 const createNew = async (req, res, next) => {
   //Mac  dinh khong can customMessage o phia BE
@@ -7,7 +8,7 @@ const createNew = async (req, res, next) => {
   //Viec Validate du lieu BAT BUOC phai co o phia BE vi day la diem cuoi de luu tru du lieu vao Database
   //Trong thuc te, dieu tot nhat cho he thong la hay luon Validate du lieu o cai BE va FE
   const correctCondition = Joi.object({
-    tittle: Joi.string().required().min(3).max(50).trim().strict().messages({
+    title: Joi.string().required().min(3).max(50).trim().strict().messages({
       "any.required": "Title is required (DVN)",
       "string.empty": "Title is not allowed to be empty (DVN)",
       "string.min": "Title min 3 chars (DVN)",
@@ -18,18 +19,17 @@ const createNew = async (req, res, next) => {
   });
 
   try {
-    console.log(req.body);
-
     //Chi dinh abortEarly: false de truong hop co nhieu loi se tra ve tat ca loi
     await correctCondition.validateAsync(req.body, { abortEarly: false });
-    // next()
-    res
-      .status(StatusCodes.CREATED)
-      .json({ message: "POST from Validation: API create new board" });
+    //Validate du lieu xong xuoi hop le thi cho request di tiep sang Controller
+    next();
   } catch (error) {
-    res.status(StatusCodes.UNPROCESSABLE_ENTITY).json({
-      errors: new Error(error).message,
-    });
+    const errorMessage = new Error(error).message;
+    const customError = new ApiError(
+      StatusCodes.UNPROCESSABLE_ENTITY,
+      errorMessage
+    );
+    next(customError);
   }
 };
 
