@@ -12,4 +12,7 @@ Router.route("/")
   //Tao moi mot cai ban ghi
   .post(boardValidation.createNew, boardController.createNew);
 
+Router.route("/:id").get(boardController.getDetails);
+// .push();
+
 export const boardRoutes = Router;

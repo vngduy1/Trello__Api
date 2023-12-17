@@ -1,5 +1,8 @@
 import { slugify } from "~/utils/formatters";
 import { boardModel } from "~/models/boardModel";
+import ApiError from "~/utils/ApiError";
+import { StatusCodes } from "http-status-codes";
+import { cloneDeep } from "lodash";
 
 const createNew = async (reqBody) => {
   try {
@@ -21,6 +24,37 @@ const createNew = async (reqBody) => {
   }
 };
 
+const getDetails = async (boardId) => {
+  try {
+    console.log(boardId);
+    const board = await boardModel.getDetails(boardId);
+    if (!board) {
+      throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
+    }
+
+    //Tao ra board clone moi de xu ly khong anh huong den cai cu
+    const resBoard = cloneDeep(board);
+    //Dua card ve dung column cua no
+    resBoard.columns.forEach((column) => {
+      //DUng method cua mongoDb
+      column.cards = resBoard.cards.filter((card) =>
+        card.columnId.equals(column._id)
+      );
+      //method cua javaScript
+      // column.cards = resBoard.cards.filter(
+      //   (card) => card.columnId.toString() === column._id.toString()
+      // );
+    });
+    //Xoa mang cards khoi board ban dau
+    delete resBoard.cards;
+
+    return resBoard;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const boardService = {
   createNew,
+  getDetails,
 };
