@@ -32,7 +32,7 @@ const validateBeforeCreate = async (data) => {
 const createNew = async (data) => {
   try {
     const validData = await validateBeforeCreate(data);
-    console.log("validData", validData);
+    // console.log("validData", validData);
 
     const createBoard = await GET_DB()
       .collection(BOARD_COLLECTION_NAME)
@@ -93,12 +93,29 @@ const getDetails = async (id) => {
   }
 };
 
+//Push mot cai gia tri columnId vao cuoi mang columnOrderIds
+const pushColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        { _id: new ObjectId(column.boardId) },
+        { $push: { columnOrderIds: new ObjectId(column._id) } },
+        { returnDocument: "after" }
+      );
+
+    return result.value;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
   createNew,
   findOneById,
   getDetails,
+  pushColumnOrderIds,
 };
 
 // 6577cbf6440e961a41cf587b

@@ -14,7 +14,7 @@ const createNew = async (reqBody) => {
 
     //Goi toi tang Model de xu ly luu ban ghi newBoard vao trong Database
     const createBoard = await boardModel.createNew(newBoard);
-    console.log(createBoard);
+    // console.log(createBoard);
 
     const getNewBoard = await boardModel.findOneById(createBoard.insertedId);
     //Tra ket qua ve trong service luon phai co return
@@ -26,7 +26,7 @@ const createNew = async (reqBody) => {
 
 const getDetails = async (boardId) => {
   try {
-    console.log(boardId);
+    // console.log(boardId);
     const board = await boardModel.getDetails(boardId);
     if (!board) {
       throw new ApiError(StatusCodes.NOT_FOUND, "Board not found!");
