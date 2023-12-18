@@ -12,7 +12,14 @@ Router.route("/")
   //Tao moi mot cai ban ghi
   .post(boardValidation.createNew, boardController.createNew);
 
-Router.route("/:id").get(boardController.getDetails);
-// .push();
+Router.route("/:id")
+  .get(boardController.getDetails)
+  .put(boardValidation.update, boardController.update);
+
+//API ho tro viec di chuyen card giua cac column khac nhau trong mot board
+Router.route("/supports/moving_card").put(
+  boardValidation.moveCardToDifferentColumn,
+  boardController.moveCardToDifferentColumn
+);
 
 export const boardRoutes = Router;

@@ -23,6 +23,9 @@ const BOARD_COLLECTION_SCHEMA = Joi.object({
   _destroy: Joi.boolean().default(false),
 });
 
+//Chi dinh ra nhung Fields ma chung ta khong muon cap nhat trong ham update()
+const INVALID_UPDATE_FIELDS = ["_id", "createdAt"];
+
 const validateBeforeCreate = async (data) => {
   return await BOARD_COLLECTION_SCHEMA.validateAsync(data, {
     abortEarly: false,
@@ -104,11 +107,42 @@ const pushColumnOrderIds = async (column) => {
         { returnDocument: "after" }
       );
 
-    return result.value;
+    return result;
   } catch (error) {
     throw new Error(error);
   }
 };
+
+const update = async (boardId, updateData) => {
+  try {
+    //Loc nhung field khong cho phep cap nhat
+    Object.keys(updateData).forEach((fieldName) => {
+      if (INVALID_UPDATE_FIELDS.includes(fieldName)) {
+        delete updateData[fieldName];
+      }
+    });
+
+    //Doi voi nhung du lieu lien quan ObjectId, bien doi ve
+    if (updateData.columnOrderIds) {
+      updateData.columnOrderIds = updateData.columnOrderIds.map(
+        (_id) => new ObjectId(_id)
+      );
+    }
+
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        { _id: new ObjectId(boardId) },
+        { $set: updateData },
+        { returnDocument: "after" }
+      );
+
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -116,6 +150,5 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
+  update,
 };
-
-// 6577cbf6440e961a41cf587b
