@@ -113,6 +113,24 @@ const pushColumnOrderIds = async (column) => {
   }
 };
 
+//Lay mot phan tu columnId ra khoi mang columnOrderIds
+//Dung $pull trong mongodb o truong hop nay de lay mot phan tu ra khoi mang roi xoa no di
+const pullColumnOrderIds = async (column) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        { _id: new ObjectId(column.boardId) },
+        { $pull: { columnOrderIds: new ObjectId(column._id) } },
+        { returnDocument: "after" }
+      );
+
+    return result;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 const update = async (boardId, updateData) => {
   try {
     //Loc nhung field khong cho phep cap nhat
@@ -151,4 +169,5 @@ export const boardModel = {
   getDetails,
   pushColumnOrderIds,
   update,
+  pullColumnOrderIds,
 };

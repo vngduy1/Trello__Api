@@ -8,6 +8,8 @@ Router.route("/")
   //Tao moi mot cai ban ghi
   .post(columnValidation.createNew, columnController.createNew);
 
-Router.route("/:id").put(columnValidation.update, columnController.update);
+Router.route("/:id")
+  .put(columnValidation.update, columnController.update)
+  .delete(columnValidation.deleteItem, columnController.deleteItem);
 
 export const columnRoutes = Router;
