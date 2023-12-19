@@ -12,7 +12,8 @@ const START_SERVER = () => {
   const app = express();
 
   //Xu ly cors
-  app.use(cors(corsOptions));
+  // app.use(cors(corsOptions));
+  app.use(cors("*"));
 
   //Bat req.body Json Data
   app.use(express.json());
